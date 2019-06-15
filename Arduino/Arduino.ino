@@ -1,19 +1,23 @@
+#include <Servo.h>
 #include <ESP8266WebServer.h>
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
+#include "config.h"
 
 #define SEALEVELPRESSURE_HPA (1013.25)
 
 Adafruit_BME280 bme;
 
-float temperature, humidity, pressure, altitude;
+float temperature, humidity, pressure, altitude, Light, Bodenfeuchte;
 
 /*Put your SSID & Password*/
-const char* ssid = "JugendHackt";  // Enter SSID here
-const char* password = "";  //Enter Password here
+
+
+int MUXPinS0 = 7, MUXPinS1 = 6, MUXPinS2 = 5, MUXPinS3 = 4;
 
 ESP8266WebServer server(80);              
+Servo myservo;
  
 void setup() {
   Serial.begin(115200);
@@ -42,6 +46,8 @@ void setup() {
   server.begin();
   Serial.println("HTTP server started");
 
+  myservo.attach(15);
+  pinMode(MUXPinS0,OUTPUT); pinMode(MUXPinS1,OUTPUT); pinMode(MUXPinS2,OUTPUT); pinMode(MUXPinS3,OUTPUT);
 }
 void loop() {
   server.handleClient();
@@ -52,14 +58,22 @@ void handle_OnConnect() {
   humidity = bme.readHumidity();
   pressure = bme.readPressure() / 100.0F;
   altitude = bme.readAltitude(SEALEVELPRESSURE_HPA);
-  server.send(200, "text/html", SendHTML(temperature,humidity,pressure,altitude)); 
+  Bodenfeuchte = getAnalog(2);
+  Light = getAnalog(1);
+  server.send(200, "text/html", SendHTML(temperature,humidity,pressure,altitude,Light,Bodenfeuchte)); 
 }
-
+float getAnalog(int MUXyPin) {
+  digitalWrite(MUXPinS3,HIGH && (MUXyPin & B00001000));
+  digitalWrite(MUXPinS2,HIGH && (MUXyPin & B00000100));
+  digitalWrite(MUXPinS1,HIGH && (MUXyPin & B00000010));
+  digitalWrite(MUXPinS0,HIGH && (MUXyPin & B00000001));
+  return (float)analogRead(A0);
+}
 void handle_NotFound(){
   server.send(404, "text/plain", "Not found");
 }
 
-String SendHTML(float temperature,float humidity,float pressure,float altitude){
+String SendHTML(float temperature,float humidity,float pressure,float altitude,float Light,float Bodenfeuchte){
   String ptr = "<!DOCTYPE html> <html>\n";
   ptr +="<head>";
   ptr +="<title>Stationsdaten</title>";
@@ -67,13 +81,12 @@ String SendHTML(float temperature,float humidity,float pressure,float altitude){
   ptr +="<meta name='editor' content='html-editor phase 5'>";
   ptr +="</head>";
   ptr +="<body>";
-  ptr +="<a>Bei Aktualisierung Neuladen</a>";
+  ptr +="<a href='http://10.59.1.166/'>Neuladen</a>";
   ptr +="<table bgcolor='green' border width=100% height='600px'>";
-  ptr +="<tr><th width='16,6%'>Wann?</th><th width='16,6%'>Temperatur</th><th width='16,6%'>Luftfeuchtigkeit</th><th width='16,6%'>Bodenfeuchtigkeit</th><th width='16,6%'>Luftdruck</th><th>Helligkeit</th></tr>";
-  ptr +="<tr><th width='16,6%'>Letzte Messung</th><th width='16,6%'>123</th><th width='16,6%'>1</th><th width='16,6%'>1</th><th width='16,6%'>1</th><th>1</th></tr>";
+  ptr +="<tr><th width='16,6%'>Was?</th><th width='16,6%'>Temperatur</th><th width='16,6%'>Luftfeuchtigkeit</th><th width='16,6%'>Bodenfeuchtigkeit</th><th width='16,6%'>Luftdruck</th><th>Helligkeit</th></tr>";
+  ptr +="<tr><th width='16,6%'>Letzte Messung</th><th width='16,6%'>"; ptr +=temperature; ptr +=" °C</th><th width='16,6%'>"; ptr +=humidity; ptr +=" %</th><th width='16,6%'>"; ptr +=Bodenfeuchte; ptr +=" %</th><th width='16,6%'>"; ptr +=pressure/100; ptr +="</th><th width='16,6%'>"; ptr +=Light; ptr +="</th></tr>";
   ptr +="</table>";
   ptr +="</body>";
   ptr +="</body>";
   return ptr;
-
 }
