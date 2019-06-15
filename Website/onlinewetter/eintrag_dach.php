@@ -1,0 +1,21 @@
+<?php
+$mysql_host = "localhost";
+$mysql_db   = "onlinewetter";
+$mysql_user = "onlinewetter";
+$mysql_pw   = "funduino";
+isset($_GET['Nno']) ? $Nno=$_GET['Nno'] : $Nno='';
+isset($_GET['Ono']) ? $Ono=$_GET['Ono'] : $Ono='';
+isset($_GET['Oso']) ? $Oso=$_GET['Oso'] : $Oso='';
+isset($_GET['Sso']) ? $Sso=$_GET['Sso'] : $Sso='';
+isset($_GET['Ssw']) ? $Ssw=$_GET['Ssw'] : $Ssw='';
+isset($_GET['Wsw']) ? $Wsw=$_GET['Wsw'] : $Wsw='';
+isset($_GET['Wnw']) ? $Wnw=$_GET['Wnw'] : $Wnw='';
+isset($_GET['Nnw']) ? $Nnw =$_GET['Nnw'] : $Nnw='';
+isset($_GET['ms']) ? $ms=$_GET['ms'] : $ms='';
+isset($_GET['kmh']) ? $kmh=$_GET['kmh'] : $kmh='';
+ 
+$connection = mysql_connect($mysql_host, $mysql_user, $mysql_pw) or die("Verbindung zur Datenbank fehlgeschlagen.");
+mysql_select_db($mysql_db, $connection) or die("Datenbank konnte nicht ausgewaehlt werden.");
+$insert_data = "INSERT INTO wind (Nno, Ono, Oso, Sso, Ssw, Wsw, Wnw, Nnw, ms, kmh) VALUES ($Nno, $Ono, $Oso, $Sso, $Ssw, $Wsw, $Wnw, $Nnw, $ms, $kmh)";
+mysql_query($insert_data, $connection) or die("Fehler beim Eintragen der Daten in die Datenbank!");
+?>

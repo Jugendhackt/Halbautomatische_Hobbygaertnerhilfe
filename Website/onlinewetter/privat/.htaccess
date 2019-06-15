@@ -1,0 +1,4 @@
+AuthName "geschützter Bereich"
+AuthType Basic
+AuthUserFile /users/onlinewetter/www/privat/.htpasswd
+require valid-user
