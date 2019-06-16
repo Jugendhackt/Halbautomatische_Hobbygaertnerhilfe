@@ -107,8 +107,14 @@ String SendHTML(float temperature, float humidity, float pressure, float altitud
   ptr += "<a href='http://10.59.1.166/'>Neuladen</a>";
   ptr += "<table bgcolor='green' border width=100% height='600px'>";
   ptr += "<tr><th width='16,6%'>Was?</th><th width='16,6%'>Temperatur</th><th width='16,6%'>Luftfeuchtigkeit</th><th width='16,6%'>Bodenfeuchtigkeit</th><th width='16,6%'>Luftdruck</th><th>Helligkeit</th></tr>";
-  ptr += "<tr><th width='16,6%'>Letzte Messung</th><th width='16,6%'>"; ptr += temperature; ptr += " &deg;C</th><th width='16,6%'>"; ptr += humidity; ptr += " %</th><th width='16,6%'>"; ptr += Bodenfeuchte; ptr += "</th><th width='16,6%'>"; ptr += pressure / 100; ptr += "</th><th width='16,6%'>"; ptr += Light; ptr += "</th></tr>";
+  ptr += "<tr><th width='16,6%'>Letzte Messung</th><th width='16,6%'>"; ptr += temperature; 
+  ptr += " &deg;C</th><th width='16,6%'>"; ptr += humidity; 
+  ptr += " %</th><th width='16,6%'>"; ptr += Bodenfeuchte; 
+  ptr += "*</th><th width='16,6%'>"; ptr += pressure / 100;
+  ptr += " hPa</th><th width='16,6%'>"; ptr += Light; 
+  ptr += "*</th></tr>";
   ptr += "</table>";
+  ptr += "<a>* Keine Einheit verfuegbar</a>";
   ptr += "</body>";
   ptr += "</body>";
   return ptr;
