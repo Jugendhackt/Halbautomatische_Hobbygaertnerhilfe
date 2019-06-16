@@ -18,6 +18,7 @@ int MUXPinS0 = D7;
 int MUXPinS1 = D6;
 int MUXPinS2 = D5;
 int MUXPinS3 = D4;
+int LEDPin = D3;
 
 ESP8266WebServer server(80);
 Servo myservo;
@@ -55,16 +56,11 @@ void setup() {
   pinMode(MUXPinS1, OUTPUT);
   pinMode(MUXPinS2, OUTPUT);
   pinMode(MUXPinS3, OUTPUT);
+  pinMode(LEDPin,OUTPUT);
 }
 void loop() {
   server.handleClient();
-   Bodenfeuchte = getAnalog(2);
-   if (Bodenfeuchte>700){
-    myservo.write(180);
-   delay(5000); 
-   myservo.write(0);
    }
-}
 
 void handle_OnConnect() {
   temperature = bme.readTemperature();
@@ -74,6 +70,16 @@ void handle_OnConnect() {
   Bodenfeuchte = getAnalog(2);
   Light = getAnalog(1);
   server.send(200, "text/html", SendHTML(temperature, humidity, pressure, altitude, Light, Bodenfeuchte));
+    if (Light > 600){ //Dunkel ist wenn der Wert hoch ist
+    digitalWrite(LEDPin,HIGH);
+   }else{
+    digitalWrite(LEDPin,LOW);
+   }
+   if (Bodenfeuchte>700){
+    myservo.write(180);
+   delay(5000); 
+   myservo.write(90);
+   }
 }
 
 
