@@ -14,16 +14,19 @@ float temperature, humidity, pressure, altitude, Light, Bodenfeuchte;
 /*Put your SSID & Password*/
 
 
-int MUXPinS0 = 7, MUXPinS1 = 6, MUXPinS2 = 5, MUXPinS3 = 4;
+int MUXPinS0 = D7;
+int MUXPinS1 = D6;
+int MUXPinS2 = D5;
+int MUXPinS3 = D4;
 
-ESP8266WebServer server(80);              
+ESP8266WebServer server(80);
 Servo myservo;
- 
+
 void setup() {
   Serial.begin(115200);
   delay(100);
-  
-  bme.begin(0x76);   
+
+  bme.begin(0x76);
 
   Serial.println("Connecting to ");
   Serial.println(ssid);
@@ -33,12 +36,13 @@ void setup() {
 
   //check wi-fi is connected to wi-fi network
   while (WiFi.status() != WL_CONNECTED) {
-  delay(1000);
-  Serial.print(".");
+    delay(1000);
+    Serial.print(".");
   }
   Serial.println("");
   Serial.println("WiFi connected..!");
-  Serial.print("Got IP: ");  Serial.println(WiFi.localIP());
+  Serial.print("Got IP: ");
+  Serial.println(WiFi.localIP());
 
   server.on("/", handle_OnConnect);
   server.onNotFound(handle_NotFound);
@@ -47,10 +51,19 @@ void setup() {
   Serial.println("HTTP server started");
 
   myservo.attach(15);
-  pinMode(MUXPinS0,OUTPUT); pinMode(MUXPinS1,OUTPUT); pinMode(MUXPinS2,OUTPUT); pinMode(MUXPinS3,OUTPUT);
+  pinMode(MUXPinS0, OUTPUT);
+  pinMode(MUXPinS1, OUTPUT);
+  pinMode(MUXPinS2, OUTPUT);
+  pinMode(MUXPinS3, OUTPUT);
 }
 void loop() {
   server.handleClient();
+   Bodenfeuchte = getAnalog(2);
+   if (Bodenfeuchte>700){
+    myservo.write(180);
+   delay(5000); 
+   myservo.write(0);
+   }
 }
 
 void handle_OnConnect() {
@@ -60,33 +73,37 @@ void handle_OnConnect() {
   altitude = bme.readAltitude(SEALEVELPRESSURE_HPA);
   Bodenfeuchte = getAnalog(2);
   Light = getAnalog(1);
-  server.send(200, "text/html", SendHTML(temperature,humidity,pressure,altitude,Light,Bodenfeuchte)); 
+  server.send(200, "text/html", SendHTML(temperature, humidity, pressure, altitude, Light, Bodenfeuchte));
 }
+
+
 float getAnalog(int MUXyPin) {
-  digitalWrite(MUXPinS3,HIGH && (MUXyPin & B00001000));
-  digitalWrite(MUXPinS2,HIGH && (MUXyPin & B00000100));
-  digitalWrite(MUXPinS1,HIGH && (MUXyPin & B00000010));
-  digitalWrite(MUXPinS0,HIGH && (MUXyPin & B00000001));
+  digitalWrite(MUXPinS3, HIGH && (MUXyPin & B00001000));
+  digitalWrite(MUXPinS2, HIGH && (MUXyPin & B00000100));
+  digitalWrite(MUXPinS1, HIGH && (MUXyPin & B00000010));
+  digitalWrite(MUXPinS0, HIGH && (MUXyPin & B00000001));
   return (float)analogRead(A0);
 }
-void handle_NotFound(){
+
+
+void handle_NotFound() {
   server.send(404, "text/plain", "Not found");
 }
 
-String SendHTML(float temperature,float humidity,float pressure,float altitude,float Light,float Bodenfeuchte){
+String SendHTML(float temperature, float humidity, float pressure, float altitude, float Light, float Bodenfeuchte) {
   String ptr = "<!DOCTYPE html> <html>\n";
-  ptr +="<head>";
-  ptr +="<title>Stationsdaten</title>";
-  ptr +="<meta name='author' content='Niclas'>";
-  ptr +="<meta name='editor' content='html-editor phase 5'>";
-  ptr +="</head>";
-  ptr +="<body>";
-  ptr +="<a href='http://10.59.1.166/'>Neuladen</a>";
-  ptr +="<table bgcolor='green' border width=100% height='600px'>";
-  ptr +="<tr><th width='16,6%'>Was?</th><th width='16,6%'>Temperatur</th><th width='16,6%'>Luftfeuchtigkeit</th><th width='16,6%'>Bodenfeuchtigkeit</th><th width='16,6%'>Luftdruck</th><th>Helligkeit</th></tr>";
-  ptr +="<tr><th width='16,6%'>Letzte Messung</th><th width='16,6%'>"; ptr +=temperature; ptr +=" °C</th><th width='16,6%'>"; ptr +=humidity; ptr +=" %</th><th width='16,6%'>"; ptr +=Bodenfeuchte; ptr +=" %</th><th width='16,6%'>"; ptr +=pressure/100; ptr +="</th><th width='16,6%'>"; ptr +=Light; ptr +="</th></tr>";
-  ptr +="</table>";
-  ptr +="</body>";
-  ptr +="</body>";
+  ptr += "<head>";
+  ptr += "<title>Stationsdaten</title>";
+  ptr += "<meta name='author' content='Niclas'>";
+  ptr += "<meta name='editor' content='html-editor phase 5'>";
+  ptr += "</head>";
+  ptr += "<body>";
+  ptr += "<a href='http://10.59.1.166/'>Neuladen</a>";
+  ptr += "<table bgcolor='green' border width=100% height='600px'>";
+  ptr += "<tr><th width='16,6%'>Was?</th><th width='16,6%'>Temperatur</th><th width='16,6%'>Luftfeuchtigkeit</th><th width='16,6%'>Bodenfeuchtigkeit</th><th width='16,6%'>Luftdruck</th><th>Helligkeit</th></tr>";
+  ptr += "<tr><th width='16,6%'>Letzte Messung</th><th width='16,6%'>"; ptr += temperature; ptr += " &deg;C</th><th width='16,6%'>"; ptr += humidity; ptr += " %</th><th width='16,6%'>"; ptr += Bodenfeuchte; ptr += "</th><th width='16,6%'>"; ptr += pressure / 100; ptr += "</th><th width='16,6%'>"; ptr += Light; ptr += "</th></tr>";
+  ptr += "</table>";
+  ptr += "</body>";
+  ptr += "</body>";
   return ptr;
 }
