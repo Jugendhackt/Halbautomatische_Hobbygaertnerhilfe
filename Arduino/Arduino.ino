@@ -1,5 +1,6 @@
 #include <Servo.h>
 #include <ESP8266WebServer.h>
+#include <WebSocketsServer.h>
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
@@ -13,6 +14,52 @@ float temperature, humidity, pressure, altitude, Light, Bodenfeuchte;
 
 /*Put your SSID & Password*/
 
+void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length)
+{
+  Serial.printf("webSocketEvent(%d, %d, ...)\r\n", num, type);
+  switch(type) {
+    case WStype_DISCONNECTED:
+      Serial.printf("[%u] Disconnected!\r\n", num);
+      break;
+    case WStype_CONNECTED:
+      {
+        IPAddress ip = webSocket.remoteIP(num);
+        Serial.printf("[%u] Connected from %d.%d.%d.%d url: %s\r\n", num, ip[0], ip[1], ip[2], ip[3], payload);
+        // Send the current LED status
+        temperature = bme.readTemperature();
+  humidity = bme.readHumidity();
+  pressure = bme.readPressure() / 100.0F;
+  altitude = bme.readAltitude(SEALEVELPRESSURE_HPA);
+  Bodenfeuchte = getAnalog(2);
+  Light = getAnalog(1);
+          webSocket.sendTXT(num, SendHTML(temperature, humidity, pressure, altitude, Light, Bodenfeuchte));
+        
+      }
+      break;
+    case WStype_TEXT:
+      Serial.printf("[%u] get Text: %s\r\n", num, payload);
+
+      if (strcmp(char("reload") , (const char *)payload) == 0) {
+        writeLED(true);
+      }
+      else {
+        Serial.println("Unknown command");
+      }
+      // send data to all connected clients
+      webSocket.broadcastTXT(payload, length);
+      break;
+    case WStype_BIN:
+      Serial.printf("[%u] get binary length: %u\r\n", num, length);
+      hexdump(payload, length);
+
+      // echo data back to browser
+      webSocket.sendBIN(num, payload, length);
+      break;
+    default:
+      Serial.printf("Invalid WStype [%d]\r\n", type);
+      break;
+  }
+}
 
 int MUXPinS0 = D7;
 int MUXPinS1 = D6;
@@ -22,6 +69,7 @@ int LEDPin = D3;
 
 ESP8266WebServer server(80);
 Servo myservo;
+WebSocketsServer webSocket = WebSocketsServer(81);
 
 void setup() {
   Serial.begin(115200);
@@ -57,8 +105,12 @@ void setup() {
   pinMode(MUXPinS2, OUTPUT);
   pinMode(MUXPinS3, OUTPUT);
   pinMode(LEDPin,OUTPUT);
+
+  webSocket.begin();
+  webSocket.onEvent(webSocketEvent);
 }
 void loop() {
+  webSocket.loop();
   server.handleClient();
    }
 
@@ -105,7 +157,8 @@ String SendHTML(float temperature, float humidity, float pressure, float altitud
   ptr += "</head>";
   ptr += "<body>";
   ptr += "<a href='http://10.59.1.166/'>Neuladen</a>";
-  ptr += "<table bgcolor='green' border width=100% height='600px'>";
+  ptr += "<button id='reload' onclick='buttonclick(this);'>reload</button>";
+  ptr += "<table  bgcolor='green' border width=100% height='600px'>";
   ptr += "<tr><th width='16,6%'>Was?</th><th width='16,6%'>Temperatur</th><th width='16,6%'>Luftfeuchtigkeit</th><th width='16,6%'>Bodenfeuchtigkeit</th><th width='16,6%'>Luftdruck</th><th>Helligkeit</th></tr>";
   ptr += "<tr><th width='16,6%'>Letzte Messung</th><th width='16,6%'>"; ptr += temperature; 
   ptr += " &deg;C</th><th width='16,6%'>"; ptr += humidity; 
@@ -116,6 +169,22 @@ String SendHTML(float temperature, float humidity, float pressure, float altitud
   ptr += "</table>";
   ptr += "<a>* Keine Einheit verfuegbar</a>";
   ptr += "</body>";
-  ptr += "</body>";
+  ptr += "<script>";
+  ptr += "var websock;"+
+  "function start() {"+
+ " websock = new WebSocket('ws://' + window.location.hostname + ':81/');"+
+ " websock.onopen = function(evt) { console.log('websock open'); };"+
+ " websock.onclose = function(evt) { console.log('websock close'); };"+
+ " websock.onerror = function(evt) { console.log(evt); };" +
+ " websock.onmessage = function(evt) {"+
+ "  console.log(evt);"+
+ " var e = document;" +
+" e.innerHTML=evt.data;"+
+ " };" +
+" }"+
+"function buttonclick(e) {" +
+" websock.send(e.id);"+
+"}" +
+" </script></html>";
   return ptr;
 }
