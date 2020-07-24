@@ -163,7 +163,7 @@ String SendHTML(float temperature, float humidity, float pressure, float altitud
   ptr += "<tr><th width='16,6%'>Letzte Messung</th><th width='16,6%'>"; ptr += temperature; 
   ptr += " &deg;C</th><th width='16,6%'>"; ptr += humidity; 
   ptr += " %</th><th width='16,6%'>"; ptr += Bodenfeuchte; 
-  ptr += "*</th><th width='16,6%'>"; ptr += pressure / 100;
+  ptr += "*</th><th width='16,6%'>"; ptr += pressure ;
   ptr += " hPa</th><th width='16,6%'>"; ptr += Light; 
   ptr += "*</th></tr>";
   ptr += "</table>";
