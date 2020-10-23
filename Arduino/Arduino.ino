@@ -165,7 +165,7 @@ String SendHTML(float temperature, float humidity, float pressure, float altitud
   ptr += " %</th><th width='16,6%'>"; ptr += Bodenfeuchte; 
   ptr += "*</th><th width='16,6%'>"; ptr += pressure ;
   ptr += " hPa</th><th width='16,6%'>"; ptr += Light; 
-  ptr += "*</th></tr>";
+  ptr += "LUX</th></tr>";
   ptr += "</table>";
   ptr += "<a>* Keine Einheit verfuegbar</a>";
   ptr += "</body>";
