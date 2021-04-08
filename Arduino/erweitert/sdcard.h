@@ -19,8 +19,8 @@ void init(){
     cardSize = SD.cardSize();
 }
 
-string readConfig(String Key){
-    #Read SD-Card
+String||JSONVar readConfig(String Key){
+    //Read SD-Card
     if(cardtyoe==CARD_NONE||reader==true){
         return;
     }
@@ -39,9 +39,9 @@ string readConfig(String Key){
     int lastIndex = 0;int counter = 0;String Keys[]=[];
     for (int i = 0; i < Key.length(); i++) {
         if (Key.substring(i, i+1) == ",") {
-        	Keys[counter] = Key.substring(lastIndex, i);
-        	lastIndex = i + 1;
-        	counter++;
+          Keys[counter] = Key.substring(lastIndex, i);
+          lastIndex = i + 1;
+          counter++;
         }
     }
     JSONVar temp=conf;
@@ -49,7 +49,8 @@ string readConfig(String Key){
         if(temp.hasOwnProperty(Keys[i])){
             temp=temp[Keys[i]]
         }else{
-            return undefined;
+            return LOW;
         }
     }
+    return temp;
 }
