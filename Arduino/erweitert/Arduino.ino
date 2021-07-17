@@ -2,6 +2,7 @@
 #include "webserver.h"
 #include "HumiPedia.h"
 #include "config.h"
+#include "gpio.h"
 
 void setup(){
   Serial.println("Connecting to ");
@@ -15,6 +16,7 @@ void setup(){
     delay(1000);
     Serial.print(".");
   }
+gpio_init();
 sd_init();
 web_init();
 }
