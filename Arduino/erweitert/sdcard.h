@@ -1,4 +1,5 @@
 //https://www.arduino.cc/en/Reference/SD
+#include "SPI.h"
 #include "SD.h"
 #include <Arduino_JSON.h>
 uint8_t cardtype;
@@ -6,9 +7,10 @@ bool reader=false;
 uint64_t cardSize;
 #define confpath "/config.json"
 JSONVar conf;
+const int chipSelect = D8;
 
 void init(){
-    if(!SD.begin()){
+    if(!SD.begin(chipSelect)){
         return("Card Mount Failed");
     }
     reader=true;
