@@ -21,7 +21,7 @@ void init(){
 
 String||JSONVar readConfig(String Key){
     //Read SD-Card
-    if(cardtyoe==CARD_NONE||reader==true){
+    if(cardtype==CARD_NONE||reader==false){
         return;
     }
     iF(!SD.exists(confpath)){
