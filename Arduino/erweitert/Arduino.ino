@@ -2,4 +2,7 @@
 #include "webserver.h"
 #include "HumiPedia.h"
 
-sd_init()
+void setup(){
+sd_init();
+web_init();
+}
