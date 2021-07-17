@@ -8,6 +8,7 @@ int MUXPinS3 = D4;
 Servo myservo;
 
 void gpio_init(){
+  read_conf();
   pinMode(MUXPinS0, OUTPUT);
   pinMode(MUXPinS1, OUTPUT);
   pinMode(MUXPinS2, OUTPUT);
