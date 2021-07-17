@@ -1,8 +1,11 @@
-#include <servo.h>
+#include <Servo.h>
+
 int MUXPinS0 = D7;
 int MUXPinS1 = D6;
 int MUXPinS2 = D5;
 int MUXPinS3 = D4;
+
+Servo myservo;
 
 void gpio_init(){
   pinMode(MUXPinS0, OUTPUT);
