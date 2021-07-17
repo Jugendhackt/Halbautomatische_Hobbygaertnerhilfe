@@ -29,7 +29,7 @@ JSONVar readConfig(String Key){
     iF(!SD.exists(confpath)){
         return;
     }
-    String conf=read(confpath);
+    String conf=sd_read(confpath);
     String temp=conf;
     conf=JSON.parse(temp);
     if (JSON.typeof(myObject) == "undefined") {
@@ -54,7 +54,7 @@ JSONVar readConfig(String Key){
     return temp;
 }
 
-String read(String path) {
+String sd_read(String path) {
 if(cardtype==CARD_NONE||reader==false){
     return;
 }
