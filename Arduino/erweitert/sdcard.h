@@ -69,3 +69,12 @@ while (file.available()) {
 ch = file.read();
 
 received += ch; } return String(received); }
+
+void write(String path, String dataString){
+File dataFile = SD.open(path, FILE_WRITE);
+if (dataFile) {
+  dataFile.println(dataString);
+  dataFile.close();
+}else{
+}
+}
