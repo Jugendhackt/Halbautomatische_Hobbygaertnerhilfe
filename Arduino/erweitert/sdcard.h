@@ -27,11 +27,8 @@ JSONVar readConfig(String Key){
     iF(!SD.exists(confpath)){
         return;
     }
-    File conf=SD.open(confpath);
-    if(!conf){
-        return;
-    }
-    String temp=File.read();
+    String conf=read(confpath);
+    String temp=conf;
     conf=JSON.parse(temp);
     if (JSON.typeof(myObject) == "undefined") {
         return;
@@ -54,3 +51,19 @@ JSONVar readConfig(String Key){
     }
     return temp;
 }
+
+String read(String path) {
+if(cardtype==CARD_NONE||reader==false){
+    return;
+}
+iF(!SD.exists(path)){
+    return;
+}
+File file=SD.open(path)
+if(!file)return;
+String received = ""; char ch; 
+while (file.available()) {
+
+ch = file.read();
+
+received += ch; } return String(received); }
