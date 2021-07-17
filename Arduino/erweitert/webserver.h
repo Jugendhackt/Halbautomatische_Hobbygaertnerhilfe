@@ -1,5 +1,7 @@
 #include <ESP8266WebServer.h>
 
+ESP8266WebServer server(80);
+
 void web_init(){
   server.on("/", handle_OnConnect);
   server.onNotFound(handle_NotFound);
