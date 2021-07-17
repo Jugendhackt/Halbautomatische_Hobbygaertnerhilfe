@@ -19,13 +19,13 @@ void init(){
     cardSize = SD.cardSize();
 }
 
-String||JSONVar readConfig(String Key){
+JSONVar readConfig(String Key){
     //Read SD-Card
     if(cardtype==CARD_NONE||reader==false){
         return;
     }
     iF(!SD.exists(confpath)){
-        return -1;
+        return;
     }
     File conf=SD.open(confpath);
     if(!conf){
@@ -49,7 +49,7 @@ String||JSONVar readConfig(String Key){
         if(temp.hasOwnProperty(Keys[i])){
             temp=temp[Keys[i]]
         }else{
-            return LOW;
+            
         }
     }
     return temp;
