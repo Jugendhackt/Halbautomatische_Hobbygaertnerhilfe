@@ -10,7 +10,7 @@ uint64_t cardSize;
 JSONVar conf;
 const int chipSelect = D8;
 
-void init(){
+void sd_init(){
     if(!SD.begin(chipSelect)){
         return("Card Mount Failed");
     }
