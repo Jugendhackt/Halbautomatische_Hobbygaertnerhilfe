@@ -10,3 +10,11 @@ void gpio_init(){
   pinMode(MUXPinS2, OUTPUT);
   pinMode(MUXPinS3, OUTPUT);
 }
+
+float getAnalog(int MUXyPin) {
+  digitalWrite(MUXPinS3, HIGH && (MUXyPin & B00001000));
+  digitalWrite(MUXPinS2, HIGH && (MUXyPin & B00000100));
+  digitalWrite(MUXPinS1, HIGH && (MUXyPin & B00000010));
+  digitalWrite(MUXPinS0, HIGH && (MUXyPin & B00000001));
+  return (float)analogRead(A0);
+}
