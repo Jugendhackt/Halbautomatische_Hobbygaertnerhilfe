@@ -17,8 +17,8 @@ void setup(){
     delay(1000);
     Serial.print(".");
   }
-gpio_init();
 sd_init();
+gpio_init();
 web_init();
 }
 
