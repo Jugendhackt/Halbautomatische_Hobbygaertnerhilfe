@@ -4,6 +4,11 @@
 #include "config.h"
 #include "gpio.h"
 
+int MUXPinS0 = D7;
+int MUXPinS1 = D6;
+int MUXPinS2 = D5;
+int MUXPinS3 = D4;
+
 void setup(){
   Serial.println("Connecting to ");
   Serial.println(ssid);
