@@ -15,4 +15,7 @@ void handle_OnConnect(){
 
 }
 
-void handle_NotFound(){}
+void handle_NotFound() {
+  server.send(404, "text/plain", "Not found");
+}
+
