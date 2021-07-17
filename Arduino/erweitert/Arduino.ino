@@ -1,5 +1,5 @@
 #include "sd_card.h"
 #include "webserver.h"
-#include "humipedia.h"
+#include "HumiPedia.h"
 
 sd_init()
