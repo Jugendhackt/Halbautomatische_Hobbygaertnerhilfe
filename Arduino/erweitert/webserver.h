@@ -12,7 +12,8 @@ void web_init(){
 void web_loop(){server.handleClient();}
 
 void handle_OnConnect(){
-
+  html=sd_read('/index.html')||'<html></html>';
+  server.send(200, "text/html", html);
 }
 
 void handle_NotFound() {
