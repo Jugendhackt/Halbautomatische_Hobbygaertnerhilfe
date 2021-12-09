@@ -1,4 +1,4 @@
-#define HumiPediaServer "example.com/plant.php"
+#define HumiPediaServer "https://lenticellate-glossa.000webhostapp.com/humipedia/plant.php"
 #include <HTTPClient.h>
 
 String request(String plant){
