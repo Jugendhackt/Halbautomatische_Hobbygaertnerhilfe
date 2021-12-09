@@ -3,7 +3,7 @@
 
 String request(String plant){
 	HTTPClient http;
-	http.begin(HumiPediaServer+"?plant_id="+plant+"&AHH=true");
+	http.begin(HumiPediaServer+"?plant_id="+plant+"&AHH");
 	int httpCode = http.GET();
 	if(httpCode > 0){
 	    String payload = http.getString();
