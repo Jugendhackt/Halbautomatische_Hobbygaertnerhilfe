@@ -6,11 +6,11 @@ var programs=[
 		start:function(){
 			ind=programs.indexOf(this)
 			if(this.shargs)alert(ind,this.shargs);
-			var window=createWindow("Config",`<button onclick='$.ajax({url:"/setclock?clock=${Date.now()}",method:"PUT"}).error((_,e)=>alert(ind,e));'>Configure Time</button>`,0,0,[this.icon,this.pos],this);
+			var window=createWindow(this, "Config",`<button onclick='$.ajax({url:"/setclock?clock=${Date.now()}",method:"PUT"}).error((_,e)=>alert(ind,e));'>Configure Time</button>`,0,0,[this.icon,this.pos]);
 			var hwnd=window.children().last();
 			hwnd.append("<button>Sensoren</button>").children().last().on("click",function(){
 				
-				createWindow("Sensoren",null,null,null,null,this)
+				createWindow(this, "Sensoren",null)
 			})
 		},
 		permissions:{notify:true},
@@ -26,7 +26,7 @@ var programs=[
 				$.ajax({url:"/data.json"})
 				.success(data=>this.data.call(this,data))
 				.error((_,e)=>{clearInterval(Ih);})},500);
-			this.stop=_=>{clearInterval(Ih);};(this.window=createWindow("Daten","Daten des Esp",0,0,[this.icon,this.pos],this)).children().last().append("<div style='position:relative;left:10px;width:50%'><canvas></canvas></div>")
+			this.stop=_=>{clearInterval(Ih);};(this.window=createWindow(this, "Daten","Daten des Esp",0,0,[this.icon,this.pos])).children().last().append("<div style='position:relative;left:10px;width:50%'><canvas></canvas></div>")
 		},
 		
 		data:function(data){
