@@ -17,11 +17,11 @@ Add entry to global variable `programs` or in the `programs.js`
 
 |Function|Discription|Requires|
 |---|---|---|
-|createWindow(this,Title,Html,<width>,<height>,<icon>)|Create a window with the title and inner html||
+|createWindow(this,Title,Html,\<width>,\<height>,\<icon>)|Create a window with the title and inner html||
 |notify(index,message)|creates a notification with the message. Index of program array needed|Permission "notify"|
 |alert(index,message)|standart function `alert` but with index for build-in manage|Permission "notify"|
 |checkPerm(index,permission)|checks permission and return value. Creates a question if not granted||
-|getIndex
+|getIndex(this)|used to get the index for some functions||
 |formatted_date(integer)|format date and time based on given integer||
 
 Some functions are callable and not listed here. Please don't use them.
