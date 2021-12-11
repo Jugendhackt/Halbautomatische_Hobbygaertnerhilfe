@@ -28,6 +28,7 @@ void setup(){
       delay(1000);
       Serial.print(".");
     }
+    Serial.println(WiFi.localIP());
     sd_init();
     gpio_init();
     web_init();
