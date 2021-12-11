@@ -15,7 +15,7 @@ if(location.protocol!=="https:")location.protocol="https:"
       for(var i=0;i<10;i++){var tr=tl.appendChild(document.createElement('tr'));for(var o=0;o<10;o++){var td=tr.appendChild(document.createElement('td'));td.id=i*10+o;td.className='dt-icon';$(td).append($('<img alt="">'));}}
       
     }
-    const createWindow=(name,content,w,h,icon,me)=>{
+    const createWindow=(me,name,content,w,h,icon)=>{
 		icon=icon||["url('data:base64;')",""];content=content||"";
       var elem=$(document.body).append(`<div class='window'></div>`).children().last().css('width',w||"30%").css('height',h||'40%')
 	  elem.append(`<div class="header"><span class="ui-icon" style="position:absolute;left:5px;background-image:${icon[0].replaceAll("\"","'")};background-position:${icon[1]}"></span><span class="title">${name}</span><button type="button" class="window-close-btn ui-btn" title="Close"><span class="ui-icon ui-icon-close"></span><span class="ui-button-icon-space"> </span>Close</button></div>`)
