@@ -1,22 +1,21 @@
 //https://www.arduino.cc/en/Reference/SD
 
 #include "SPI.h"
-#include "SD.h"
+#include "SD_MMC.h"
 #include <Arduino_JSON.h>
 uint8_t cardtype;
 bool reader=false;
 uint64_t cardSize;
 #define confpath "/config.json"
 JSONVar conf;
-const int chipSelect = D8;
 
 void sd_init(){
-    if(!SD.begin(chipSelect)){
+    if(!SD_MMC.begin()){
         return("Card Mount Failed");
     }
     reader=true;
-    cardtype=SD.cardType();
-        if(cardType == CARD_NONE){
+    cardtype=SD_MMC.cardType();
+    if(cardType == CARD_NONE){
         return("No SD card attached");
     }
     cardSize = SD.cardSize();
@@ -27,7 +26,7 @@ JSONVar readConfig(String Key){
     if(cardtype==CARD_NONE||reader==false){
         return;
     }
-    iF(!SD.exists(confpath)){
+    iF(!SD_MMC.exists(confpath)){
         return;
     }
     String conf=sd_read(confpath);
@@ -59,10 +58,10 @@ String sd_read(String path) {
 if(cardtype==CARD_NONE||reader==false){
     return;
 }
-iF(!SD.exists(path)){
+iF(!SD_MMC.exists(path)){
     return;
 }
-File file=SD.open(path)
+File file=SD_MMC.open(path)
 if(!file)return;
 String received = ""; char ch; 
 while (file.available()) {
@@ -72,10 +71,37 @@ ch = file.read();
 received += ch; } return String(received); }
 
 void write(String path, String dataString){
-File dataFile = SD.open(path, FILE_WRITE);
+File dataFile = SD_MMC.open(path, FILE_WRITE);
 if (dataFile) {
   dataFile.println(dataString);
   dataFile.close();
 }else{
 }
+}
+
+String * listDir(const char * dirname, uint8_t levels){
+  String r[];
+  if(cardtype==CARD_NONE||reader==false){
+    return r;
+  }
+  File root = SD_MMC.open(dirname);
+  if(!root){
+    return r;
+  }
+  if(!root.isDirectory()){
+    return r;
+  }
+
+  File file = root.openNextFile();
+  while(file){
+    if(file.isDirectory()){
+      file.name() >> r;
+      if(levels){
+        listDir(fs, file.name(), levels -1);
+      }
+    } else {
+      file.name() >> r;
+    }
+    file = root.openNextFile();
+  }
 }
